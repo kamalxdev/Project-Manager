@@ -131,3 +131,19 @@ _PUT_ `/api/task/:id`
   ```bash
     Task Updated Successfully
   ```
+
+### Testing
+
+## Unit testing
+
+```bash
+    cd backend
+    npm run test
+```
+
+## Integration testing
+
+```bash
+    chmod 700 ./scripts/integation.sh
+    ./scripts/integation.sh
+```
