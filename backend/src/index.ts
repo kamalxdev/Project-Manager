@@ -9,7 +9,9 @@ import { authRoutes } from "./routes/auth";
 import { userRoutes } from "./routes/user";
 
 export function buildServer() {
-  const server = fastify();
+  const server = fastify({
+    logger:true
+  });
 
   server.register(fastifyJwt, {
     secret: "supersecret",
@@ -52,7 +54,7 @@ mainServer.register(fastifyWebsocket);
 
 mainServer.register(handleSocket);
 
-mainServer.listen({ port: 8080 }, (err, address) => {
+mainServer.listen({port:8080,host:"0.0.0.0"}, (err, address) => {
   if (err) {
     console.error(err);
     process.exit(1);

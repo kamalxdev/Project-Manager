@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "$POSTGRES_USER", "-d", "$POSTGRES_DB" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: "mysecretpassword"
+      POSTGRES_USER: "outpost"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_SERVER_SOCKET_URl: "ws://localhost:8080"
+        NEXT_PUBLIC_SERVER_URl: "http://localhost:8080"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - postgres
+    environment:
+      NEXT_PUBLIC_SERVER_URl: "http://localhost:8080"
+      NEXT_PUBLIC_SERVER_SOCKET_URl: "ws://localhost:8080"
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URl: "postgresql://outpost:mysecretpassword@postgres:5432/"
+      CLIENT_URl: "http://localhost:3000"
+    restart: unless-stopped
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
