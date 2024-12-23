@@ -1,8 +1,7 @@
 "use client";
 
 import { itask } from "@/types/task";
-import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
 
 export type iTaskContext = {
   value: itask[];
@@ -19,19 +18,7 @@ export default function TaskContextProvider({
   children: React.ReactNode;
 }) {
   const [tasks, setTasks] = useState<itask[]>([]);
-  useEffect(() => {
-    if (tasks && tasks.length > 0) return;
-    axios
-      .get(`${process.env.NEXT_PUBLIC_SERVER_URl}/api/task`)
-      .then((res) => {
-        if (res.status == 200) {
-          setTasks(res.data);
-        }
-      })
-      .catch((err) => {
-        console.log("Error on fetching data: ", err);
-      });
-  }, []);
+  
 
   function addTask(task: itask) {
     setTasks((prev) => [task, ...prev]);

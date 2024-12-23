@@ -5,6 +5,7 @@ import { getTask, postTask, updateTaskAsCompleted } from "../controllers/task";
 
 
 export async function taskRoutes(route: FastifyInstance) {
+    route.addHook('onRequest', (request) => request.jwtVerify())
     route.addSchema({
         $id:"createTaskSchema",
         type:"object",
@@ -21,8 +22,7 @@ export async function taskRoutes(route: FastifyInstance) {
                 $ref:"createTaskSchema#"
             }
         },
-        handler: postTask,
-        websocket:true
+        handler: postTask
     });
-    route.put("/:id",{ websocket: true }, updateTaskAsCompleted);
+    route.put("/:id", updateTaskAsCompleted);
   }

@@ -5,6 +5,8 @@ import Task from "@/components/task";
 import useTask from "@/hooks/task";
 import listemMessages from "@/utils/listenMessages";
 import { socket } from "@/utils/socket";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { FaRegUser } from "react-icons/fa";
 import { RiAddLargeFill } from "react-icons/ri";
@@ -14,9 +16,36 @@ type iNav = "All" | "Pending" | "Completed";
 export default function Home() {
   const [nav, setNav] = useState<iNav>("All");
   const [toggleNewTask, setToggleNewTask] = useState(false);
+  const [user,setUser]=useState<{email:string,name:string}>()
   const task = useTask();
+  const router = useRouter()
 
   useEffect(() => {
+    if (task?.value?.length > 0) return;
+    axios
+      .get(`${process.env.NEXT_PUBLIC_SERVER_URl}/api/task`,{
+        withCredentials:true
+      })
+      .then((res) => {
+        if (res.status == 200) {
+          task.setTasks(res.data)
+        }
+      })
+      .catch((err) => {
+        console.log("Error on fetching data: ", err);
+      });
+  }, []);
+
+
+  useEffect(() => {
+    axios.get(`${process.env.NEXT_PUBLIC_SERVER_URl}/api/user`,{withCredentials:true}).then((res)=>{
+      if(res.status != 200){
+        return router.push('/login')
+      }
+      setUser(res.data.user)
+    }).catch(()=>{
+      return router.push('/login')
+    })
     socket.onmessage = (message) => {
       try {
         listemMessages(JSON.parse(message.data), task);
@@ -40,10 +69,10 @@ export default function Home() {
       >
         <header className="relative flex items-center justify-between py-1 pt-2">
           <h1 className="font-semibold text-lg">Task Manager</h1>
-          <button className="flex justify-center items-center border border-gray-500 px-3 py-1 rounded-sm gap-2">
+          {user?.name && <button className="flex justify-center items-center border border-gray-500 px-3 py-1 rounded-sm gap-2">
             <FaRegUser />
-            <p>Kamal Singh</p>
-          </button>
+            <p>{user?.name}</p>
+          </button>}
         </header>
         <main className="">
           <nav className=" mt-2 flex justify-between flex-wrap gap-2">

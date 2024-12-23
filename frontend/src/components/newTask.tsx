@@ -16,7 +16,7 @@ export default function NewTask({ onClose }: { onClose: () => void }) {
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_SERVER_URl}/api/task`,
-        data
+        data,{withCredentials:true}
       );
       if (response.status == 201) {
         onClose();

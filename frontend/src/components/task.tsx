@@ -21,7 +21,7 @@ export default function Task({
     setLoading(true);
     try {
       const response = await axios.put(
-        `${process.env.NEXT_PUBLIC_SERVER_URl}/api/task/${id}`
+        `${process.env.NEXT_PUBLIC_SERVER_URl}/api/task/${id}`,{},{withCredentials:true}
       );
       if (response.status == 201) {
         socket.send(JSON.stringify({event:"task:completed",id}))
