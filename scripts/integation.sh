@@ -1,5 +1,5 @@
 docker-compose up -d
-echo '- Checking API endpoints'
 cd ./backend
+echo '- Checking API endpoints'
 npm run test
 docker-compose down
