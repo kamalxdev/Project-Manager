@@ -18,7 +18,6 @@ export async function postTask(
 ) {
   try {
     const body = request.body;
-
     const newTask = await db
       .insert(TaskTable)
       .values({
@@ -30,7 +29,7 @@ export async function postTask(
       });
 
     if (!newTask[0]?.id) {
-      throw new Error();
+      throw new Error("No Id found");
     }
 
     return reply
@@ -48,6 +47,9 @@ export async function updateTaskAsCompleted(
 ) {
   try {
     const taskid = request.params.id;
+    if (!taskid) {
+      throw new Error("No task ID provided");
+    }
     const updateTask = await db
       .update(TaskTable)
       .set({
