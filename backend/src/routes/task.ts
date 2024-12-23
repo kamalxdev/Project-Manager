@@ -21,7 +21,8 @@ export async function taskRoutes(route: FastifyInstance) {
                 $ref:"createTaskSchema#"
             }
         },
-        handler: postTask
+        handler: postTask,
+        websocket:true
     });
-    route.put("/:id", updateTaskAsCompleted);
+    route.put("/:id",{ websocket: true }, updateTaskAsCompleted);
   }

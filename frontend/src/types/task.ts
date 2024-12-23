@@ -6,6 +6,6 @@ export interface itask {
     title: string,
     description: string,
     status : 'PENDING'| 'COMPLETED',
-    createdAt:Date,
-    completedAt:Date
+    createdAt:string,
+    completedAt:string
 }

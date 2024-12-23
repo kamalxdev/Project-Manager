@@ -33,7 +33,9 @@ export async function postTask(
       throw new Error();
     }
 
-    return reply.code(201).send({ success: "Task Created Successfully" });
+    return reply
+      .code(201)
+      .send({ success: "Task Created Successfully", id: newTask[0]?.id });
   } catch (error) {
     console.log("Error on postTask: ", error);
     return reply.code(400).send({ error: "Error on creating a new task" });
@@ -50,6 +52,7 @@ export async function updateTaskAsCompleted(
       .update(TaskTable)
       .set({
         status: "COMPLETED",
+        completedAt: new Date(),
       })
       .where(eq(TaskTable.id, taskid))
       .returning({ id: TaskTable.id });
